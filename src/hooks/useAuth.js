@@ -23,6 +23,15 @@ export function useAuth() {
     if (error) throw error
   }
 
+  async function verifyCode(email, token) {
+    const { error } = await supabase.auth.verifyOtp({
+      email,
+      token,
+      type: 'email',
+    })
+    if (error) throw error
+  }
+
   async function signOut() {
     await supabase.auth.signOut()
   }
@@ -32,6 +41,7 @@ export function useAuth() {
     user: session?.user ?? null,
     loading: session === undefined,
     signInWithMagicLink,
+    verifyCode,
     signOut,
   }
 }
