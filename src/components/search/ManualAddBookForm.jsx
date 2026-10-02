@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { CategorySelect } from '../common/CategorySelect'
 
 const EMPTY_FORM = { title: '', author: '', category: '', totalPages: '', coverUrl: '' }
 
@@ -87,19 +88,11 @@ export function ManualAddBookForm({ categories, onAddBook }) {
         <label className="mb-1 block text-xs font-medium text-zinc-500 dark:text-zinc-400">
           Categoría / género
         </label>
-        <input
-          list="manual-add-category-options"
-          type="text"
+        <CategorySelect
+          categories={categories}
           value={form.category}
-          onChange={(e) => updateField('category', e.target.value)}
-          placeholder="Ej: Ciencia ficción"
-          className="w-full rounded-lg border border-zinc-300 bg-white px-3 py-1.5 text-sm dark:border-zinc-700 dark:bg-zinc-900"
+          onChange={(value) => updateField('category', value)}
         />
-        <datalist id="manual-add-category-options">
-          {categories.map((c) => (
-            <option key={c} value={c} />
-          ))}
-        </datalist>
       </div>
 
       <div>

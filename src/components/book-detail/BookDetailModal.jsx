@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import { useQuotes } from '../../hooks/useQuotes'
+import { CategorySelect } from '../common/CategorySelect'
 import { ProgressBar } from './ProgressBar'
 import { QuotesList } from './QuotesList'
 import { RatingStars } from './RatingStars'
@@ -8,15 +9,10 @@ import { StatusSelector } from './StatusSelector'
 
 export function BookDetailModal({ book, categories, existingBooks, onClose, onUpdate, onAddBook }) {
   const { quotes, loading: quotesLoading, create, remove } = useQuotes(book.id)
-  const [category, setCategory] = useState(book.category ?? '')
   const [review, setReview] = useState(book.review ?? '')
   const [coverUrl, setCoverUrl] = useState(book.cover_url ?? '')
   const [editingCover, setEditingCover] = useState(false)
   const [copied, setCopied] = useState(false)
-
-  function saveCategory() {
-    if (category !== (book.category ?? '')) onUpdate({ category: category.trim() || null })
-  }
 
   function saveReview() {
     if (review !== (book.review ?? '')) onUpdate({ review: review.trim() || null })
@@ -147,19 +143,11 @@ export function BookDetailModal({ book, categories, existingBooks, onClose, onUp
             <label className="mb-1 block text-xs font-medium text-zinc-500 dark:text-zinc-400">
               Categoría / género
             </label>
-            <input
-              list="category-options"
-              value={category}
-              onChange={(e) => setCategory(e.target.value)}
-              onBlur={saveCategory}
-              placeholder="Ej: Ciencia ficción"
-              className="w-full rounded-lg border border-zinc-300 bg-white px-3 py-1.5 text-sm dark:border-zinc-700 dark:bg-zinc-900"
+            <CategorySelect
+              categories={categories}
+              value={book.category}
+              onChange={(value) => onUpdate({ category: value || null })}
             />
-            <datalist id="category-options">
-              {categories.map((c) => (
-                <option key={c} value={c} />
-              ))}
-            </datalist>
           </div>
 
           <div>
