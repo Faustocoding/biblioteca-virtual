@@ -1,5 +1,6 @@
 import { lazy, Suspense, useMemo, useState } from 'react'
 import { BrowserRouter, Route, Routes } from 'react-router-dom'
+import { ChangePasswordButton } from './components/auth/ChangePasswordButton'
 import { LoginScreen } from './components/auth/LoginScreen'
 import { BookDetailModal } from './components/book-detail/BookDetailModal'
 import { DarkModeToggle } from './components/layout/DarkModeToggle'
@@ -31,8 +32,9 @@ function AppShell() {
           <h1 className="text-lg font-semibold text-zinc-900 dark:text-zinc-100">
             Mi Biblioteca
           </h1>
-          <div className="flex items-center gap-1">
+          <div className="relative flex items-center gap-1">
             <DarkModeToggle />
+            <ChangePasswordButton />
             <SignOutButton />
           </div>
         </header>

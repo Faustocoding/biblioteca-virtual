@@ -15,20 +15,18 @@ export function useAuth() {
     return () => listener.subscription.unsubscribe()
   }, [])
 
-  async function signInWithMagicLink(email) {
-    const { error } = await supabase.auth.signInWithOtp({
-      email,
-      options: { emailRedirectTo: window.location.origin },
-    })
+  async function signUp(email, password) {
+    const { error } = await supabase.auth.signUp({ email, password })
     if (error) throw error
   }
 
-  async function verifyCode(email, token) {
-    const { error } = await supabase.auth.verifyOtp({
-      email,
-      token,
-      type: 'email',
-    })
+  async function signIn(email, password) {
+    const { error } = await supabase.auth.signInWithPassword({ email, password })
+    if (error) throw error
+  }
+
+  async function setPassword(password) {
+    const { error } = await supabase.auth.updateUser({ password })
     if (error) throw error
   }
 
@@ -40,8 +38,9 @@ export function useAuth() {
     session,
     user: session?.user ?? null,
     loading: session === undefined,
-    signInWithMagicLink,
-    verifyCode,
+    signUp,
+    signIn,
+    setPassword,
     signOut,
   }
 }
