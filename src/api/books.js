@@ -18,6 +18,7 @@ export async function addBookFromSearchResult(result) {
       author: result.author,
       cover_url: result.coverUrl,
       category: result.category ?? null,
+      description: result.description ?? null,
       total_pages: result.totalPages ?? null,
       status: 'to_read',
       source_api: result.source,

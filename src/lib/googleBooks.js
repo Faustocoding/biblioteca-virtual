@@ -20,8 +20,16 @@ export async function searchGoogleBooks(query, { limit = 20 } = {}) {
       year: info.publishedDate ? Number(info.publishedDate.slice(0, 4)) : null,
       totalPages: info.pageCount ?? null,
       category: info.categories?.[0] ?? null,
+      description: info.description ?? null,
     }
   })
+}
+
+export async function fetchGoogleBooksDescription(id) {
+  const res = await fetch(`${VOLUMES_URL}/${id}`)
+  if (!res.ok) return null
+  const data = await res.json()
+  return data.volumeInfo?.description ?? null
 }
 
 export async function searchGoogleBooksByAuthorOrSubject({ author, subject, excludeId, limit = 6 }) {

@@ -30,6 +30,16 @@ export async function searchOpenLibrary(query, { limit = 20 } = {}) {
   }))
 }
 
+export async function fetchOpenLibraryDescription(workKey) {
+  if (!workKey) return null
+  const res = await fetch(`https://openlibrary.org${workKey}.json`)
+  if (!res.ok) return null
+  const data = await res.json()
+  const desc = data.description
+  if (!desc) return null
+  return typeof desc === 'string' ? desc : (desc.value ?? null)
+}
+
 export async function searchOpenLibraryByAuthorOrSubject({ author, subject, excludeKey, limit = 6 }) {
   const url = new URL(SEARCH_URL)
   const q = subject ? `subject:"${subject}"` : `author:"${author}"`

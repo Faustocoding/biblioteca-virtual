@@ -1,5 +1,27 @@
-import { searchGoogleBooks, searchGoogleBooksByAuthorOrSubject } from './googleBooks'
-import { searchOpenLibrary, searchOpenLibraryByAuthorOrSubject } from './openLibrary'
+import {
+  fetchGoogleBooksDescription,
+  searchGoogleBooks,
+  searchGoogleBooksByAuthorOrSubject,
+} from './googleBooks'
+import {
+  fetchOpenLibraryDescription,
+  searchOpenLibrary,
+  searchOpenLibraryByAuthorOrSubject,
+} from './openLibrary'
+
+// Busca el resumen de un libro ya guardado, según de qué API vino.
+// Se usa para completar la descripción cuando no vino en la búsqueda inicial
+// (Open Library no la trae en el buscador) o para libros agregados manualmente.
+export async function fetchBookDescription({ source, sourceId }) {
+  if (!sourceId) return null
+  try {
+    if (source === 'googlebooks') return await fetchGoogleBooksDescription(sourceId)
+    if (source === 'openlibrary') return await fetchOpenLibraryDescription(sourceId)
+  } catch {
+    return null
+  }
+  return null
+}
 
 // Busca en Open Library primero. Si trae pocos resultados o la mayoría
 // no tiene portada, completa/reemplaza con Google Books.
