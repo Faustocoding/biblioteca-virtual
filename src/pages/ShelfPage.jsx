@@ -11,7 +11,7 @@ import { useViewMode } from '../hooks/useViewMode'
 const EMPTY_FILTERS = { query: '', status: '', category: '', rating: '', author: '' }
 
 export function ShelfPage({ onOpenBook }) {
-  const { books, loading, error, addBook, editBook } = useBooksContext()
+  const { books, loading, error, addBook } = useBooksContext()
   const [filters, setFilters] = useState(EMPTY_FILTERS)
   const [view, setView] = useViewMode()
 
@@ -83,12 +83,7 @@ export function ShelfPage({ onOpenBook }) {
         {view === 'shelf' ? (
           <div className="grid grid-cols-3 gap-3 sm:grid-cols-4">
             {filteredBooks.map((book) => (
-              <BookCard
-                key={book.id}
-                book={book}
-                onClick={() => onOpenBook(book.id)}
-                onUpdate={(patch) => editBook(book.id, patch)}
-              />
+              <BookCard key={book.id} book={book} onClick={() => onOpenBook(book.id)} />
             ))}
           </div>
         ) : (

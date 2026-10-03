@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import { useQuotes } from '../../hooks/useQuotes'
+import { fetchBookDescription } from '../../lib/bookSearch'
 import { CategorySelect } from '../common/CategorySelect'
 import { ProgressBar } from './ProgressBar'
 import { QuotesList } from './QuotesList'
@@ -13,6 +14,9 @@ export function BookDetailModal({ book, categories, existingBooks, onClose, onUp
   const [coverUrl, setCoverUrl] = useState(book.cover_url ?? '')
   const [editingCover, setEditingCover] = useState(false)
   const [copied, setCopied] = useState(false)
+  const [showSummary, setShowSummary] = useState(false)
+  const [summary, setSummary] = useState(book.description ?? null)
+  const [summaryStatus, setSummaryStatus] = useState(book.description ? 'ready' : 'idle')
 
   function saveReview() {
     if (review !== (book.review ?? '')) onUpdate({ review: review.trim() || null })
@@ -21,6 +25,22 @@ export function BookDetailModal({ book, categories, existingBooks, onClose, onUp
   function saveCoverUrl() {
     if (coverUrl !== (book.cover_url ?? '')) onUpdate({ cover_url: coverUrl.trim() || null })
     setEditingCover(false)
+  }
+
+  async function handleToggleSummary() {
+    const opening = !showSummary
+    setShowSummary(opening)
+    if (!opening || summaryStatus !== 'idle') return
+
+    setSummaryStatus('loading')
+    const desc = await fetchBookDescription({ source: book.source_api, sourceId: book.source_id })
+    if (desc) {
+      setSummary(desc)
+      setSummaryStatus('ready')
+      onUpdate({ description: desc })
+    } else {
+      setSummaryStatus('unavailable')
+    }
   }
 
   async function handleShare() {
@@ -64,6 +84,15 @@ export function BookDetailModal({ book, categories, existingBooks, onClose, onUp
           <div className="relative flex flex-none items-center gap-1">
             <button
               type="button"
+              onClick={handleToggleSummary}
+              aria-label="Ver resumen"
+              title="Ver resumen"
+              className="rounded-full p-1 text-zinc-400 hover:text-zinc-600 dark:hover:text-zinc-200"
+            >
+              ℹ️
+            </button>
+            <button
+              type="button"
               onClick={handleShare}
               aria-label="Compartir"
               className="rounded-full p-1 text-zinc-400 hover:text-zinc-600 dark:hover:text-zinc-200"
@@ -85,6 +114,22 @@ export function BookDetailModal({ book, categories, existingBooks, onClose, onUp
             </button>
           </div>
         </div>
+
+        {showSummary && (
+          <div className="mb-4 rounded-xl border border-zinc-200 p-3 dark:border-zinc-800">
+            {summaryStatus === 'loading' && (
+              <p className="text-sm text-zinc-400">Buscando resumen...</p>
+            )}
+            {summaryStatus === 'unavailable' && (
+              <p className="text-sm text-zinc-400">No hay resumen disponible para este libro.</p>
+            )}
+            {summaryStatus === 'ready' && summary && (
+              <p className="whitespace-pre-line text-sm leading-relaxed text-zinc-700 dark:text-zinc-300">
+                {summary}
+              </p>
+            )}
+          </div>
+        )}
 
         <div className="flex flex-col gap-4">
           <StatusSelector value={book.status} onChange={(status) => onUpdate({ status })} />
